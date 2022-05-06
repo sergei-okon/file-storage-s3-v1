@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-//TODO NEED USE THIS CLASS 27-29 строка нужно разобраться с ролями
+
 
 @Data
 public class SecurityUser implements UserDetails {
@@ -19,7 +19,7 @@ public class SecurityUser implements UserDetails {
     private String password;
     private boolean active;
     private List<GrantedAuthority> authorities;
-    //TODO убери List, просто GrantedAuthority
+
 
     public SecurityUser(User user) {
         this.userName = user.getEmail();
@@ -28,8 +28,6 @@ public class SecurityUser implements UserDetails {
         this.authorities = Arrays.stream(user.getRole().toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-
-        //TODO попробуй завтра так   new SimpleGrantedAuthority(user.getRole().toString());
     }
 
     @Override

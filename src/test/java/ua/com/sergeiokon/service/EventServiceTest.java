@@ -19,8 +19,8 @@ import static org.mockito.Mockito.verify;
 
 class EventServiceTest {
 
-    EventRepository eventRepositoryMock;
-    EventService eventService;
+    private EventRepository eventRepositoryMock;
+    private EventService eventService;
 
     @BeforeEach
     void setUp() {
@@ -52,8 +52,8 @@ class EventServiceTest {
         event.setOperation(Operation.UPLOAD);
 
         EventDto eventDto = new EventDto();
-        eventDto.setFileId(1l);
-        eventDto.setUserId(1l);
+        eventDto.setFileId(1L);
+        eventDto.setUserId(1L);
         eventDto.setCreated(LocalDateTime.now());
         eventDto.setOperation(Operation.UPLOAD);
 

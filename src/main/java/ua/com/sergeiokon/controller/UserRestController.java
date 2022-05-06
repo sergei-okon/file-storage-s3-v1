@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ua.com.sergeiokon.model.dto.UserDto;
-import ua.com.sergeiokon.repository.entity.User;
 import ua.com.sergeiokon.service.UserService;
 
 import javax.validation.Valid;
@@ -18,12 +17,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/users")
-public class UserRestrController {
+public class UserRestController {
 
     private final UserService userService;
 
     @GetMapping("/info")
-    public User getUserDetails() {
+    public UserDto getCurrentUserDetails() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.findByEmail(email);
     }
@@ -39,7 +38,7 @@ public class UserRestrController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userDto));
     }
 

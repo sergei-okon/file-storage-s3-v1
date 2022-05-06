@@ -15,9 +15,9 @@ import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
-    UserRepository userRepositoryMock;
-    PasswordEncoder passwordEncoderMock;
-    UserService userService;
+    private UserRepository userRepositoryMock;
+    private PasswordEncoder passwordEncoderMock;
+    private UserService userService;
 
     @BeforeEach
     void setUp() {

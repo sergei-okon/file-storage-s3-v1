@@ -29,9 +29,10 @@ public class UserService {
         return convertToDto(user);
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public UserDto findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User with   " + email + " not found"));
+        return convertToDto(user);
     }
 
     public UserDto save(UserDto userDto) {

@@ -1,14 +1,20 @@
 package ua.com.sergeiokon.controller;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.ObjectListing;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ua.com.sergeiokon.model.dto.FileDto;
 import ua.com.sergeiokon.service.FileService;
+import ua.com.sergeiokon.service.UserService;
 
 import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -16,6 +22,7 @@ import java.util.List;
 @RequestMapping("/v1/files")
 public class FileRestController {
 
+    private final UserService userService;
     private final FileService fileService;
 
     @GetMapping
@@ -28,26 +35,42 @@ public class FileRestController {
         return ResponseEntity.ok(fileService.findById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<FileDto> addFile(@RequestBody FileDto fileDto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(fileService.save(fileDto));
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadFileToS3(@RequestParam("file") MultipartFile file) {
+        Long userId = userService.findByEmail(getCurrentUsername()).getId();
+        fileService.uploadFile(file, userId);
+
+        return ResponseEntity.ok("File uploaded successful");
     }
 
-    @PutMapping
-    public ResponseEntity<FileDto> updateFile(@RequestBody FileDto fileDto) {
-        return ResponseEntity.ok(fileService.update(fileDto));
+    @GetMapping("/download")
+    public ResponseEntity<?> downloadFile(@RequestParam Long fileId,
+                                          @RequestParam String path) {
+        Long userId = userService.findByEmail(getCurrentUsername()).getId();
+        fileService.downloadFile(fileId, path, userId);
+        return ResponseEntity.ok("File downloaded successful");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFile(@PathVariable("id") Long id) {
-        fileService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @GetMapping("/s3")
+    public ResponseEntity<ObjectListing> getFilesFromS3(@RequestBody String bucketName) {
+        return ResponseEntity.ok(fileService.getListFilesFromS3(bucketName));
+    }
+
+    private String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(
             IllegalArgumentException ex) {
+        log.error(ex.getMessage());
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AmazonS3Exception.class)
+    public ResponseEntity<?> handleIllegalArgumentException(
+            AmazonS3Exception ex) {
         log.error(ex.getMessage());
         return ResponseEntity.badRequest().body(ex.getMessage());
     }

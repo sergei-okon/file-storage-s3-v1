@@ -9,8 +9,8 @@ import static org.mockito.Mockito.*;
 
 class S3PropertiesServiceTest {
 
-    S3PropertyRepository s3PropertyRepositoryMock;
-    S3PropertiesService s3PropertiesService;
+    private S3PropertyRepository s3PropertyRepositoryMock;
+    private S3PropertiesService s3PropertiesService;
 
     @BeforeEach
     void setUp() {

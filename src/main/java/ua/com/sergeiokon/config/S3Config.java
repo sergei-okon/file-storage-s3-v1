@@ -1,4 +1,4 @@
-package ua.com.sergeiokon.s3;
+package ua.com.sergeiokon.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -11,18 +11,18 @@ import ua.com.sergeiokon.repository.S3PropertyRepository;
 import ua.com.sergeiokon.repository.entity.S3Property;
 
 @Component
-public class S3Connector {
+public class S3Config {
 
     private final static String ACCESS_KEY = "accessKey";
     private final static String SECRET_KEY = "secretKey";
 
     private final S3PropertyRepository s3PropertyRepository;
 
-    public S3Connector(S3PropertyRepository s3PropertyRepository) {
+    public S3Config(S3PropertyRepository s3PropertyRepository) {
         this.s3PropertyRepository = s3PropertyRepository;
     }
 
-    public AmazonS3 getS3client() {
+    public AmazonS3 s3client() {
         S3Property accessKey = s3PropertyRepository.findByKey(ACCESS_KEY)
                 .orElseThrow(() -> new IllegalArgumentException("accessKey not found"));
 
