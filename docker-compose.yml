@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  docker-mysql:
+    image: mysql:8.0.28
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    ports:
+      - 3306:3306
+
+  app:
+    image: app:latest
+    ports:
+      - 8091:8091
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/file_storage_s3?useUnicode=true&serverTimezone=UTC
+
+    depends_on:
+      - docker-mysql
